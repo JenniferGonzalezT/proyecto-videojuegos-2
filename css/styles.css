@@ -28,10 +28,12 @@ body {
     color: var(--color-texto-claro);
 }
 
+
 /* ===== FONDO HEADER, FOOTER ===== */
 header, footer {
     background-color: var(--color-fondo-oscuro-secundario);
 }
+
 
 /* ===== TÍTULOS ===== */
 .navbar-brand {
@@ -47,6 +49,7 @@ h2 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 
 /* ===== NAVBAR ===== */
 .navbar-nav .nav-link {
@@ -72,6 +75,15 @@ h2 {
     color: var(--color-texto-oscuro);
 }
 
+
+/* ===== BARRA DE MENSAJES DINÁMICA DEL MENÚ ===== */
+.barra-interactiva {
+    color: var(--color-serenity);
+    min-height: 40px;
+    background-color: var(--color-fondo-oscuro-principal)
+}
+
+
 /* ===== CARRUSEL ===== */
 #carrusel-promociones {
     max-width: 1200px;
@@ -87,6 +99,7 @@ h2 {
     text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.9);
 }
 
+
 /* ===== CARDS ===== */
 .card {
     border-color: var(--color-serenity);
@@ -100,6 +113,36 @@ h2 {
     transform: translateY(-5px);
 }
 
+
+/* ===== BOTÓN CARRITO (OCULTO POR DEFECTO) ===== */
+.btn-carrito {
+    background-color: var(--color-rose-quartz);
+    color: var(--color-texto-oscuro);
+    border: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.card:hover .btn-carrito {
+    opacity: 1;
+    visibility: visible;
+}
+
+.btn-carrito:hover {
+    background-color: var(--color-serenity);
+    transform: scale(1.05);
+}
+
+
+/* ===== ALERTA CARRITO ===== */
+.alerta-carrito {
+    color: var(--color-texto-oscuro);
+    font-size: 0.85rem;
+}
+
+
 /* ===== CONTACTO ===== */
 footer a {
     color: var(--color-texto-claro);
@@ -107,4 +150,19 @@ footer a {
 
 footer a:hover {
     color: var(--color-rose-quartz);
+}
+
+
+/* ===== BOTÓN ===== */
+.btn-primary {
+    background-color: var(--color-rose-quartz);
+    border: none;
+    color: var(--color-texto-oscuro);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-serenity);
+    color: var(--color-texto-oscuro);
+    transform: scale(1.02);
 }
