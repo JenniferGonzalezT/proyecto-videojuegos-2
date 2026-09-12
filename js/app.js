@@ -89,7 +89,7 @@ const renderizarProductos = (productos) => {
                         ${producto.descripcion}
                     </p>
                     <!-- Botón Carrito -->
-                    <button class="btn btn-carrito w-100 fw-bold rounded-3 mt-3">
+                    <button class="btn btn-carrito w-100 fw-bold rounded-3">
                         Añadir al carrito
                     </button>
                 </div>
