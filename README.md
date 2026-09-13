@@ -44,7 +44,7 @@ proyecto-videojuegos/
 │   └── [imágenes optimizadas en formato .webp]
 ├── js/
 │   └── app.js            # Lógica de programación, Fetch API y eventos
-├── index.html          # Estructura principal de la página
+├── index.html            # Estructura principal de la página
 └── README.md
 ```
 
