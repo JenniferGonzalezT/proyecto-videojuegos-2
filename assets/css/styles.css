@@ -84,6 +84,12 @@ h2 {
 }
 
 
+/* ===== ALERTA BÚSQUEDA ===== */
+.alerta-busqueda {
+    color: var(--color-serenity);
+}
+
+
 /* ===== CARRUSEL ===== */
 #carrusel-promociones {
     max-width: 1200px;

@@ -41,7 +41,7 @@ const contenedorProductos = document.getElementById('contenedor-productos');
 
 // Función principal para realizar la petición HTTP y obtener datos del JSON
 const cargarProductos = () => {
-    fetch('/data/productos.json')
+    fetch('./data/productos.json')
         .then(respuesta => {
             // Manejo de posibles errores de conexión
             if (!respuesta.ok) {
@@ -144,7 +144,7 @@ formBusqueda.addEventListener('submit', (evento) => {
     // Validar si el arreglo quedó vacío para mostrar un mensaje amigable
     if (productosFiltrados.length === 0) {
         contenedorProductos.innerHTML = `
-            <p class="text-center w-100 mt-5 fs-4" style="color: var(--color-serenity);">
+            <p class="text-center w-100 mt-5 fs-4 alerta-busqueda">
                 No se encontraron juegos para "${terminoBusqueda}".
             </p>
         `;
