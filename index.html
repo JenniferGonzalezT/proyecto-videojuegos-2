@@ -19,7 +19,7 @@
 
             <!-- Button collapse -->
             <button
-                class="navbar-toggler" 
+                class="navbar-toggler ms-auto me-2" 
                 type="button" 
                 data-bs-toggle="collapse" 
                 data-bs-target="#contenido-nav" 
@@ -75,7 +75,7 @@
                     <!-- Busqueda -->
                     <input
                         type="search"
-                        class="form-control me-1"
+                        class="form-control me-1 mb-2"
                         id="input-busqueda"
                         placeholder="Buscar juego..."
                         aria-label="Buscar"
@@ -83,22 +83,22 @@
                     <!-- Botón Buscar -->
                     <button 
                         type="submit"
-                        class="btn btn-primary me-2"
+                        class="btn btn-primary me-2 mb-2"
                     >
                         Buscar
                     </button>
                 </form>
-
-                <!-- Botón Carrito -->
-                <button 
-                    class="btn btn-outline-light me-2 fw-bold"
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCarrito"
-                >
-                    🛒 Carrito (<span id="contador-carrito">0</span>)
-                </button>
             </div>
+
+            <!-- Botón Carrito -->
+            <button 
+                class="btn btn-primary me-1 mb-2 fw-bold"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#modalCarrito"
+            >
+                Carrito (<span id="contador-carrito">0</span>)
+            </button>
         </nav>
     </header>
 
@@ -280,7 +280,7 @@
                 <div class="col-12 col-lg-4 text-lg-center">
                     <h3>¡Ponte en contacto con nosotros!</h3>
                     <!-- Formulario de contacto -->
-                    <form id="form-contacto">
+                    <form id="form-contacto" novalidate method="post">
                         <!-- Campo Nombre -->
                         <div class="mb-3">
                             <input
@@ -290,6 +290,9 @@
                                 placeholder="Ingresa tu nombre"
                                 required
                             >
+                            <div class="invalid-feedback">
+                                Por favor, ingresa un nombre válido (entre 3 a 30 caracteres).
+                            </div>
                         </div>
                         <!-- Campo Correo -->
                         <div class="mb-3">
@@ -300,16 +303,22 @@
                                 placeholder="Ingresa tu correo"
                                 required
                             >
+                            <div class="invalid-feedback">
+                                Por favor, ingresa un correo electrónico válido.
+                            </div>
                         </div>
                         <!-- Campo Mensaje -->
                         <div class="mb-3">
-                            <input
-                                type="text"
+                            <textarea
                                 class="form-control"
                                 id="form-mensaje"
+                                rows="3"
                                 placeholder="Ingresa tu mensaje o consulta"
                                 required
-                            >
+                            ></textarea>
+                            <div class="invalid-feedback">
+                                Por favor, detalla brevemente tu consulta (entre 10 a 200 caracteres).
+                            </div>
                         </div>
                         <!-- Botón Enviar -->
                         <button 

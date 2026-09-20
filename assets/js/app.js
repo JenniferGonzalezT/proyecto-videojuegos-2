@@ -156,11 +156,7 @@ const renderizarProductos = (productos) => {
         // Añadir al carrito
         configurarBotonCarrito(btnCarrito, cuerpoTarjeta, producto);
     });
-}
-
-// Escuchamos el evento 'DOMContentLoaded' para ejecutar la carga
-// justo cuando la estructura HTML de la página esté lista
-document.addEventListener('DOMContentLoaded', cargarProductos);
+};
 
 
 // ===== BARRA DE BÚSQUEDA (SUBMIT) ===== //
@@ -201,7 +197,8 @@ formBusqueda.addEventListener('submit', (evento) => {
 
 
 // ===== CARRITO DE COMPRAS ===== //
-let carrito = [];
+// Inicializar el carrito buscando datos previos en localStorage
+let carrito = JSON.parse(localStorage.getItem('carritoTeenGames')) || [];
 
 // Función para añadir un producto al carrito (Evento Click)
 const configurarBotonCarrito = (boton, contenedor, producto) => {
@@ -218,8 +215,9 @@ const configurarBotonCarrito = (boton, contenedor, producto) => {
             }, 3000);
         }
 
-        // Agregar producto al carrito
+        // Agregar producto al arreglo y guardar en LocalStorage
         carrito.push(producto);
+        localStorage.setItem('carritoTeenGames', JSON.stringify(carrito));
 
         // Actualizar ventana del Modal
         actualizarModalCarrito();
@@ -238,10 +236,16 @@ const actualizarModalCarrito = () => {
     // Limpiar contenido anterior del modal
     cuerpoCarrito.innerHTML = '';
 
+    if (carrito.length === 0) {
+        cuerpoCarrito.innerHTML = '<p class="text-center mt-3">Tu carrito está vacío.</p>';
+        totalCarrito.textContent = '0';
+        return;
+    }
+
     let total = 0;
 
-    // Recorrer arreglo del carrito para crear los elementos
-    carrito.forEach((item) => {
+    // Recorrer arreglo del carrito para crear/eliminar elementos
+    carrito.forEach((item, index) => {
         // Sumar total
         total += item.precio;
 
@@ -255,8 +259,16 @@ const actualizarModalCarrito = () => {
             <div>
                 <h6 class="mb-0 fw-bold">${item.titulo}</h6>
             </div>
-            <div class="fw-bold">
-                $${item.precio.toLocaleString('es-CL')}
+            <div class="d-flex align-items-center gap-3">
+                <span class="fw-bold">
+                    $${item.precio.toLocaleString('es-CL')}
+                </span>
+                <button 
+                    class="btn btn-sm btn-danger fw-bold btn-eliminar" 
+                    data-indice="${index}"
+                >
+                    X
+                </button>
             </div>
         `;
 
@@ -265,43 +277,103 @@ const actualizarModalCarrito = () => {
 
     // Actualizar total en el Pie del Modal
     totalCarrito.textContent = total.toLocaleString('es-CL');
-}
+
+    // Asignar evento de eliminar a los botones generados
+    const botonesEliminar = cuerpoCarrito.querySelectorAll('.btn-eliminar');
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', (evento) => {
+            const indice = evento.target.getAttribute('data-indice');
+            // Eliminar 1 elemento en la posición del índice
+            carrito.splice(indice, 1);
+            // Actualizar LocalStorage y el modal
+            localStorage.setItem('carritoTeenGames', JSON.stringify(carrito));
+            actualizarModalCarrito();
+        });
+    });
+};
 
 
 // ===== ENVIO FORMULARIO DE CONTACTO (SUBMIT) ===== //
-// Elemento formulario de contacto
 const formulario = document.getElementById('form-contacto');
+const inputNombre = document.getElementById('form-nombre');
+const inputCorreo = document.getElementById('form-correo');
+const inputMensaje = document.getElementById('form-mensaje');
 
-// Envio de formulario (evento submit)
+// Función genérica para pintar el input verde (válido) o rojo (inválido)
+const validarCampo = (input, condicion) => {
+    if (condicion) {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+        return true;
+    } else {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+        return false;
+    }
+};
+
+// Eventos en tiempo real (se ejecutan con cada pulsación de tecla)
+inputNombre.addEventListener('input', () => {
+    const largoNombre = inputNombre.value.trim().length;
+    validarCampo(inputNombre, largoNombre >= 3 && largoNombre <= 30);
+});
+
+inputCorreo.addEventListener('input', () => {
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validarCampo(inputCorreo, regexCorreo.test(inputCorreo.value.trim()));
+});
+
+inputMensaje.addEventListener('input', () => {
+    const largoMensaje = inputMensaje.value.trim().length;
+    validarCampo(inputMensaje, largoMensaje >= 10 && largoMensaje <= 200);
+});
+
+// Evento Submit
 formulario.addEventListener('submit', (evento) => {
-    // Detener recarga de la página
     evento.preventDefault();
 
-    // Capturar inputs
-    const nombre = document.getElementById('form-nombre').value;
-    const correo = document.getElementById('form-correo').value;
+    // Re-evaluar todos los campos al momento de enviar
+    const largoNombre = inputNombre.value.trim().length;
+    const nombreValido = validarCampo(inputNombre, largoNombre >= 3 && largoNombre <= 30);
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const correoValido = validarCampo(inputCorreo, regexCorreo.test(inputCorreo.value.trim()));
+    const largoMensaje = inputMensaje.value.trim().length;
+    const mensajeValido = validarCampo(inputMensaje, largoMensaje >= 10 && largoMensaje <= 200);
 
-    // Eliminar alertas previas
-    const alertaPrevia = document.getElementById('alerta-exito');
-    if (alertaPrevia) {
-        alertaPrevia.remove();
+    // Si todos los campos cumplen las reglas, procedemos con éxito
+    if (nombreValido && correoValido && mensajeValido) {
+        
+        // Limpiar alertas previas si existían
+        const alertaPrevia = document.getElementById('alerta-contacto');
+        if (alertaPrevia) alertaPrevia.remove();
+
+        // Creamos la alerta de éxito general
+        const contenedorAlerta = document.createElement('div');
+        contenedorAlerta.id = 'alerta-contacto';
+        contenedorAlerta.className = 'alert alert-success mt-3 text-center';
+        contenedorAlerta.textContent = `
+            ¡Gracias por contactarnos, ${inputNombre.value.trim()}! 
+            Pronto responderemos a tu correo ${inputCorreo.value.trim()}.
+        `;
+        
+        formulario.appendChild(contenedorAlerta);
+        
+        // Resetear el formulario y quitar los bordes verdes
+        formulario.reset();
+        inputNombre.classList.remove('is-valid');
+        inputCorreo.classList.remove('is-valid');
+        inputMensaje.classList.remove('is-valid');
+
+        // Desaparecer mensaje de éxito
+        setTimeout(() => {
+            contenedorAlerta.remove();
+        }, 10000);
     }
+});
 
-    // Nuevo contenedor para mensajes de alerta
-    const mensajeAlerta = document.createElement('div');
-    mensajeAlerta.id = 'alerta-exito';
-    mensajeAlerta.className = 'alert alert-success mt-3 text-center';
-    mensajeAlerta.textContent = `¡Gracias por contactarnos, ${nombre}! 
-        Pronto enviaremos una respuesta a su correo ${correo}.`;
 
-    // Añadir mensaje al DOM
-    formulario.appendChild(mensajeAlerta);
-
-    // Limpieza de los campos del formulario
-    formulario.reset();
-
-    // Eliminar automáticamente el mensaje luego de 10 segundos
-    setTimeout(() => {
-        mensajeAlerta.remove();
-    }, 10000);
-})
+// ===== INICIALIZADOR DE LA APLICACIÓN ===== //
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProductos();
+    actualizarModalCarrito(); 
+});
