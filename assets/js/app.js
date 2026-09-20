@@ -33,12 +33,15 @@ enlacesMenu.forEach(enlace => {
 
 
 // ===== CARGA DINÁMICA DE PRODUCTOS CON FETCH API ===== //
+// Variable global para guardar los productos y luego filtrarlos
+let catalogoGlobal = [];
+
 // Elemento contenedor principal de productos
 const contenedorProductos = document.getElementById('contenedor-productos');
 
 // Función principal para realizar la petición HTTP y obtener datos del JSON
 const cargarProductos = () => {
-    fetch('data/productos.json')
+    fetch('./data/productos.json')
         .then(respuesta => {
             // Manejo de posibles errores de conexión
             if (!respuesta.ok) {
@@ -47,7 +50,8 @@ const cargarProductos = () => {
             return respuesta.json();
         })
         .then(datos => {
-            renderizarProductos(datos);
+            catalogoGlobal = datos;
+            renderizarProductos(catalogoGlobal);
         })
         .catch(error => {
             // Captura y gestión centralizada de errores
@@ -56,7 +60,7 @@ const cargarProductos = () => {
                 '<p class="text-center text-danger"> \
                     Lo sentimos, no se ha podido cargar el catálogo de productos. \
                 </p>';
-        })
+        });
 }
 
 // Función que recorre el arreglo de datos y crea dinámicamente los elementos en el DOM
@@ -65,6 +69,9 @@ const renderizarProductos = (productos) => {
     contenedorProductos.innerHTML = '';
 
     productos.forEach(producto => {
+        // Formatear precio a CLP
+        const precioFormateado = producto.precio.toLocaleString('es-CL');
+
         // Crear columna
         const columna = document.createElement('div');
         columna.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
@@ -85,8 +92,11 @@ const renderizarProductos = (productos) => {
                     <h3 class="card-title text-center">
                         ${producto.titulo}
                     </h3>
-                    <p class="card-text">
+                    <p class="card-text mb-4">
                         ${producto.descripcion}
+                    </p>
+                    <p class="card-text precio-card fw-bold text-center fs-5 mt-auto">
+                        Precio: $${precioFormateado}
                     </p>
                     <!-- Botón Carrito -->
                     <button class="btn btn-carrito w-100 fw-bold rounded-3">
@@ -102,7 +112,7 @@ const renderizarProductos = (productos) => {
         // Añadir al carrito
         const btnCarrito = columna.querySelector('.btn-carrito');
         const cuerpoTarjeta = columna.querySelector('.card-body');
-        configurarBotonCarrito(btnCarrito, cuerpoTarjeta);
+        configurarBotonCarrito(btnCarrito, cuerpoTarjeta, producto);
     });
 }
 
@@ -111,22 +121,109 @@ const renderizarProductos = (productos) => {
 document.addEventListener('DOMContentLoaded', cargarProductos);
 
 
+// ===== BARRA DE BÚSQUEDA (SUBMIT) ===== //
+const formBusqueda = document.getElementById('form-busqueda');
+const inputBusqueda = document.getElementById('input-busqueda');
+const seccionProductos = document.getElementById('productos');
+
+formBusqueda.addEventListener('submit', (evento) => {
+    // Evitar que la página se recargue
+    evento.preventDefault(); 
+    
+    // Limpiar la búsqueda (minúsculas y quitar espacios en blanco)
+    const terminoBusqueda = inputBusqueda.value.toLowerCase().trim();
+    
+    // Filtrar el catálogo global buscando coincidencias en el título
+    const productosFiltrados = catalogoGlobal.filter(producto => 
+        producto.titulo.toLowerCase().includes(terminoBusqueda)
+    );
+
+    // Renderizar solo los productos que coinciden
+    renderizarProductos(productosFiltrados);
+
+    // Validar si el arreglo quedó vacío para mostrar un mensaje amigable
+    if (productosFiltrados.length === 0) {
+        contenedorProductos.innerHTML = `
+            <p class="text-center w-100 mt-5 fs-4" style="color: var(--color-serenity);">
+                No se encontraron juegos para "${terminoBusqueda}".
+            </p>
+        `;
+    }
+
+    // Desplazamiento automático hacia la sección de resultados
+    seccionProductos.scrollIntoView({ behavior: 'smooth' });
+
+    // Limpiar la barra de búsqueda
+    formBusqueda.reset();
+});
+
+
+// ===== CARRITO DE COMPRAS ===== //
+let carrito = [];
+
 // Función para añadir un producto al carrito (Evento Click)
-const configurarBotonCarrito = (boton, contenedor) => {
+const configurarBotonCarrito = (boton, contenedor, producto) => {
     boton.addEventListener('click', () => {
+        // Alerta visual en la tarjeta
         if (!contenedor.querySelector('.alerta-carrito')) {
             const mensajeAviso = document.createElement('div');
             mensajeAviso.className = 'alerta-carrito alert p-2 mt-2 mb-0 text-center fw-bold';
             mensajeAviso.textContent = '¡Añadido a tu carrito!';
-
             contenedor.appendChild(mensajeAviso);
 
             setTimeout(() => {
                 mensajeAviso.remove();
             }, 3000);
         }
+
+        // Agregar producto al carrito
+        carrito.push(producto);
+
+        // Actualizar ventana del Modal
+        actualizarModalCarrito();
     });
 };
+
+// Función para manipular el DOM del Modal de Resumen de compras
+const actualizarModalCarrito = () => {
+    const cuerpoCarrito = document.getElementById('cuerpo-carrito');
+    const contadorCarrito = document.getElementById('contador-carrito');
+    const totalCarrito = document.getElementById('total-carrito');
+
+    // Actualizar número del ícono del carrito en la barra de navegación
+    contadorCarrito.textContent = carrito.length;
+
+    // Limpiar contenido anterior del modal
+    cuerpoCarrito.innerHTML = '';
+
+    let total = 0;
+
+    // Recorrer arreglo del carrito para crear los elementos
+    carrito.forEach((item) => {
+        // Sumar total
+        total += item.precio;
+
+        // Crear nodo para el resumen del producto
+        const filaProducto = document.createElement('div');
+        filaProducto.className =
+            'd-flex justify-content-between align-item-center \
+             mb-3 border-bottom pb-2 border-secondary';
+        
+        filaProducto.innerHTML = `
+            <div>
+                <h6 class="mb-0 fw-bold">${item.titulo}</h6>
+            </div>
+            <div class="fw-bold">
+                $${item.precio.toLocaleString('es-CL')}
+            </div>
+        `;
+
+        cuerpoCarrito.appendChild(filaProducto);
+    });
+
+    // Actualizar total en el Pie del Modal
+    totalCarrito.textContent = total.toLocaleString('es-CL');
+}
 
 
 // ===== ENVIO FORMULARIO DE CONTACTO (SUBMIT) ===== //

@@ -36,15 +36,16 @@ El sitio simula el catálogo web de una tienda de videojuegos, implementando bue
 ## 📂 Estructura del Proyecto
 ```
 proyecto-videojuegos/
-├── css/
-│   └── styles.css        # Hoja de estilos personalizada
+├── assets/
+│   ├── css/
+│   │   └── styles.css      # Hoja de estilos personalizada
+│   ├── img/
+│   │   └── [imágenes optimizadas en formato .webp]
+│   └── js/
+│       └── app.js          # Lógica de programación, Fetch API y eventos
 ├── data/
-│   └── productos.json    # Base de datos (Catálogo de videojuegos)
-├── img/
-│   └── [imágenes optimizadas en formato .webp]
-├── js/
-│   └── app.js            # Lógica de programación, Fetch API y eventos
-├── index.html            # Estructura principal de la página
+│   └── productos.json      # Base de datos (Catálogo de videojuegos)
+├── index.html              # Estructura principal de la página
 └── README.md
 ```
 

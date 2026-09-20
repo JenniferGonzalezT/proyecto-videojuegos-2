@@ -106,11 +106,18 @@ h2 {
     background-color: var(--color-fondo-claro);
     text-align: justify;
     transition: all 0.2s;
-    cursor: pointer;
 }
 
 .card:hover {
     transform: translateY(-5px);
+}
+
+
+/* ===== PRECIO PRODUCTOS ===== */
+.precio-card {
+    background-color: var(--color-serenity);
+    color: var(--color-texto-claro);
+    border-radius: 6px;
 }
 
 
@@ -121,8 +128,8 @@ h2 {
     border: none;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-    margin-top: auto;
+    transition: background-color 0.3s, transform 0.2s;;
+
 }
 
 .card:hover .btn-carrito {
@@ -132,6 +139,7 @@ h2 {
 
 .btn-carrito:hover {
     background-color: var(--color-serenity);
+    color: var(--color-texto-claro);
     transform: scale(1.05);
 }
 
@@ -153,7 +161,18 @@ footer a:hover {
 }
 
 
-/* ===== BOTÓN ===== */
+/* ===== CARRITO ===== */
+.modal-content {
+    background-color: var(--color-fondo-oscuro-principal);
+    color: var(--color-texto-claro);
+}
+
+#modalCarritoLabel {
+    color: var(--color-serenity);
+}
+
+
+/* ===== ESTILO BOTÓN PRINCIPAL ===== */
 .btn-primary {
     background-color: var(--color-rose-quartz);
     border: none;
@@ -163,6 +182,6 @@ footer a:hover {
 
 .btn-primary:hover {
     background-color: var(--color-serenity);
-    color: var(--color-texto-oscuro);
+    color: var(--color-texto-claro);
     transform: scale(1.02);
 }
