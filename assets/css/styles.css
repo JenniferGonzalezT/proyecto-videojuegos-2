@@ -106,6 +106,12 @@ h2 {
 }
 
 
+/* ===== CARGANDO PRODUCTOS ===== */
+.spinner-border, .mensajeCarga {
+    color: var(--color-serenity);
+}
+
+
 /* ===== CARDS ===== */
 .card {
     border-color: var(--color-serenity);

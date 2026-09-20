@@ -39,79 +39,121 @@ let catalogoGlobal = [];
 // Elemento contenedor principal de productos
 const contenedorProductos = document.getElementById('contenedor-productos');
 
-// Función principal para realizar la petición HTTP y obtener datos del JSON
-const cargarProductos = () => {
-    fetch('./data/productos.json')
-        .then(respuesta => {
-            // Manejo de posibles errores de conexión
-            if (!respuesta.ok) {
-                throw new Error('Error al cargar los productos.')
-            }
-            return respuesta.json();
-        })
-        .then(datos => {
-            catalogoGlobal = datos;
-            renderizarProductos(catalogoGlobal);
-        })
-        .catch(error => {
-            // Captura y gestión centralizada de errores
-            console.error('Hubo un problema con la petición Fetch:', error);
-            contenedorProductos.innerHTML = 
-                '<p class="text-center text-danger"> \
-                    Lo sentimos, no se ha podido cargar el catálogo de productos. \
-                </p>';
-        });
-}
+// Función principal asíncrona (async/await) para obtener datos del JSON
+const cargarProductos = async () => {
+    // Estado visual de "Cargando" (Spinner de Bootstrap)
+    contenedorProductos.innerHTML = `
+        <div class="col-12 text-center mt-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3 fw-bold mensajeCarga">
+                Cargando catálogo de juegos...
+            </p>
+        </div>
+    `;
 
-// Función que recorre el arreglo de datos y crea dinámicamente los elementos en el DOM
+    // Configurar tiempo máximo de espera (Timeout de 5 segundos)
+    const controlador = new AbortController();
+    const idEspera = setTimeout(() => controlador.abort(), 5000);
+
+    try {
+        // Petición Fetch usando async/await y el controlador de tiempo
+        const respuesta = await fetch('./data/productos.json', { signal: controlador.signal });
+        
+        // Limpiar el timeout si el servidor responde a tiempo
+        clearTimeout(idEspera);
+
+        if (!respuesta.ok) {
+            throw new Error('Error al cargar los productos.');
+        }
+
+        // Parsear el JSON
+        const datos = await respuesta.json();
+        catalogoGlobal = datos;
+        
+        // Renderizar los productos
+        renderizarProductos(catalogoGlobal);
+
+    } catch (error) {
+        console.error('Hubo un problema con la petición Fetch:', error);
+        
+        // Definir mensaje de error dependiendo si fue por Timeout o por Red
+        const mensajeError = error.name === 'AbortError'
+            ? 'El tiempo de espera se ha agotado. Verifica tu conexión.'
+            : 'Lo sentimos, no se ha podido cargar el catálogo de productos.';
+
+        contenedorProductos.innerHTML = `
+            <div class="col-12 text-center mt-5">
+                <p class="text-danger fw-bold fs-5">${mensajeError}</p>
+            </div>
+        `;
+    }
+};
+
+// Función que recorre el arreglo de datos y crea dinámicamente los elementos en el DOM (Inserción Segura)
 const renderizarProductos = (productos) => {
-    // Contenedor vacío antes de inyectar
-    contenedorProductos.innerHTML = '';
+    // Vaciar contenedor antes de inyectar
+    contenedorProductos.textContent = '';
 
     productos.forEach(producto => {
         // Formatear precio a CLP
         const precioFormateado = producto.precio.toLocaleString('es-CL');
 
-        // Crear columna
+        // Contenedor principal de la columna
         const columna = document.createElement('div');
         columna.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
 
-        // Crear tarjeta
-        columna.innerHTML = `
-            <!-- Card -->
-            <article class="card h-100 shadow-sm">
-                <!-- Imagen -->
-                <img
-                    src="${producto.imagen}" 
-                    alt="Portada videojuego ${producto.titulo}"
-                    class="card-img-top"
-                    loading="lazy"
-                >
-                <!-- Cuerpo -->
-                <div class="card-body d-flex flex-column">
-                    <h3 class="card-title text-center">
-                        ${producto.titulo}
-                    </h3>
-                    <p class="card-text mb-4">
-                        ${producto.descripcion}
-                    </p>
-                    <p class="card-text precio-card fw-bold text-center fs-5 mt-auto">
-                        Precio: $${precioFormateado}
-                    </p>
-                    <!-- Botón Carrito -->
-                    <button class="btn btn-carrito w-100 fw-bold rounded-3">
-                        Añadir al carrito
-                    </button>
-                </div>
-            </article>
-        `;
+        // Etiqueta <article> para la tarjeta
+        const tarjeta = document.createElement('article');
+        tarjeta.className = 'card h-100 shadow-sm';
+
+        // Imagen de la tarjeta
+        const imagen = document.createElement('img');
+        imagen.src = producto.imagen;
+        imagen.alt = `Portada videojuego ${producto.titulo}`
+        imagen.className = 'card-img-top';
+        imagen.setAttribute('loading', 'lazy');
+
+        // Cuerpo de la tarjeta
+        const cuerpoTarjeta = document.createElement('div');
+        cuerpoTarjeta.className = 'card-body d-flex flex-column';
+
+        // Título producto
+        const titulo = document.createElement('h3');
+        titulo.className = 'card-title text-center';
+        titulo.textContent = producto.titulo;
+
+        // Descripción producto
+        const descripcion = document.createElement('p');
+        descripcion.className = 'card-text mb-4';
+        descripcion.textContent = producto.descripcion;
+
+        // Precio producto
+        const precio = document.createElement('p');
+        precio.className = 'card-text precio-card fw-bold text-center fs-5 mt-auto';
+        precio.textContent = `Precio: $${precioFormateado}`;
+
+        // Botón Añadir al carrito
+        const btnCarrito = document.createElement('button');
+        btnCarrito.className = 'btn btn-carrito w-100 fw-bold rounded-3';
+        btnCarrito.textContent = 'Añadir al carrito';
+
+        // Armar estructura
+        cuerpoTarjeta.appendChild(titulo);
+        cuerpoTarjeta.appendChild(descripcion);
+        cuerpoTarjeta.appendChild(precio);
+        cuerpoTarjeta.appendChild(btnCarrito);
+
+        tarjeta.appendChild(imagen);
+        tarjeta.appendChild(cuerpoTarjeta);
+
+        columna.appendChild(tarjeta);
 
         // Añadir elemento al contenedor principal
         contenedorProductos.appendChild(columna);
 
         // Añadir al carrito
-        const btnCarrito = columna.querySelector('.btn-carrito');
-        const cuerpoTarjeta = columna.querySelector('.card-body');
         configurarBotonCarrito(btnCarrito, cuerpoTarjeta, producto);
     });
 }

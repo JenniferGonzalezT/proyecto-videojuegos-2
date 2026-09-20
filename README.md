@@ -1,6 +1,6 @@
 # TeenGames - Tienda de Videojuegos 🎮
 
-Este proyecto es una aplicación web responsiva y dinámica desarrollada para la asignatura Desarrollo Frontend I (PFY2201), correspondiente a la Semana 5: Manipulando el DOM con JavaScript para mejorar la interactividad.
+Este proyecto es una aplicación web responsiva y dinámica desarrollada para la asignatura Desarrollo Frontend I (PFY2201), correspondiente a la Semana 6: Optimizando la Lógica y Rendimiento de una Página Web con JavaScript.
 
 El sitio simula el catálogo web de una tienda de videojuegos, implementando buenas prácticas de diseño, accesibilidad, optimización de recursos y manipulación avanzada del Document Object Model (DOM).
 
