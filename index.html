@@ -15,7 +15,7 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark px-4">
             <!-- Brand -->
-            <a href="#inicio" class="navbar-brand">TeenGames</a>
+            <a href="#inicio" class="navbar-brand me-4">TeenGames</a>
 
             <!-- Button collapse -->
             <button
@@ -33,14 +33,14 @@
             <!-- Nav content -->
             <div class="collapse navbar-collapse" id="contenido-nav">
                 <!-- Categorías menú -->
-                <ul class="navbar-nav ms-auto me-2">
+                <ul class="navbar-nav ms-auto me-2 align-items-lg-center text-lg-center">
                     <!-- Inicio -->
                     <li class="nav-item">
                         <a href="#inicio" class="nav-link active">Inicio</a>
                     </li>
                     <!-- Productos destacados -->
                     <li class="nav-item">
-                        <a href="#productos" class="nav-link">Productos destacados</a>
+                        <a href="#productos" class="nav-link text-nowrap">Productos destacados</a>
                     </li>
                     <!-- Catálogo -->
                     <li class="nav-item dropdown">
@@ -71,11 +71,11 @@
                 </ul>
 
                 <!-- Formulario Barra de búsqueda -->
-                <form class="d-flex" id="form-busqueda" role="search">
+                <form class="d-flex me-2" id="form-busqueda" role="search">
                     <!-- Busqueda -->
                     <input
                         type="search"
-                        class="form-control me-1 mb-2"
+                        class="form-control me-1"
                         id="input-busqueda"
                         placeholder="Buscar juego..."
                         aria-label="Buscar"
@@ -83,7 +83,7 @@
                     <!-- Botón Buscar -->
                     <button 
                         type="submit"
-                        class="btn btn-primary me-2 mb-2"
+                        class="btn btn-primary"
                     >
                         Buscar
                     </button>
@@ -92,7 +92,7 @@
 
             <!-- Botón Carrito -->
             <button 
-                class="btn btn-primary me-1 mb-2 fw-bold"
+                class="btn btn-primary my-2 fw-bold text-nowrap"
                 type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#modalCarrito"
@@ -353,8 +353,7 @@
     <div 
         class="modal fade" 
         id="modalCarrito" 
-        tabindex="-1" 
-        aria-labelledby="modalCarritoLabel" 
+        tabindex="-1"
         aria-hidden="true"
     >
         <div class="modal-dialog modal-dialog-scrollable">
