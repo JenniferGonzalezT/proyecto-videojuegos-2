@@ -2,35 +2,43 @@
 
 Este proyecto es una aplicación web responsiva y dinámica desarrollada para la asignatura Desarrollo Frontend I (PFY2201), correspondiente a la Semana 6: Optimizando la Lógica y Rendimiento de una Página Web con JavaScript.
 
-El sitio simula el catálogo web de una tienda de videojuegos, implementando buenas prácticas de diseño, accesibilidad, optimización de recursos y manipulación avanzada del Document Object Model (DOM).
+El sitio simula el catálogo web de una tienda de videojuegos, implementando buenas prácticas de diseño, accesibilidad, optimización de recursos, seguridad y manipulación avanzada del Document Object Model (DOM).
 
 
 ## 🚀 Características Principales
 
-* **Catálogo Dinámico (Fetch API):** Los productos se cargan de forma asíncrona desde un archivo JSON externo utilizando promesas, separando los datos de la estructura HTML.
+* **Catálogo Dinámico y Asincronía (Fetch API):** Los productos se cargan desde un archivo JSON externo utilizando `async/await`. Incluye un estado visual de carga (Spinner), manejo centralizado de errores con `try/catch` y un controlador de tiempo máximo de espera (`AbortController`).
 
-* **Interactividad Avanzada (DOM & Eventos):**
+* **Manipulación Segura del DOM:** Creación de tarjetas y elementos dinámicos utilizando estrictamente `createElement` y `textContent`, erradicando el uso de `innerHTML` para la inserción de datos externos y previniendo vulnerabilidades de inyección de código (XSS).
 
-  * **Menú Interactivo (`mouseover` / `mouseout`):** Barra dinámica que muestra mensajes contextuales al pasar el cursor sobre los enlaces de navegación
-  
-  * **Carrito de Compras (`click`):** Botones de "Añadir al carrito" que aparecen con efectos CSS (`:hover`) y generan una alerta dinámica temporal de éxito al ser presionados, utilizando `createElement` y `appendChild`.
+* **Carrito de Compras Persistente:** 
+  * Integración con un componente **Modal de Bootstrap 5** para mostrar el resumen de compras sin abandonar la vista principal.
 
-  * **Formulario de Contacto (`submit`):** Captura de datos sin recarga de página (`preventDefault`), con inyección dinámica de un mensaje de confirmación que desaparece automáticamente (`setTimeout`).
+  * Cálculos matemáticos en tiempo real y formateo de precios a pesos chilenos (CLP).
 
-  * **Diseño Responsivo:** Uso avanzado del sistema de cuadrículas (Grid System) y componentes de Bootstrap 5 (Navbar, Carousel, Cards).
+  * Funcionalidad para eliminar productos individuales del carrito.
 
-  * **Optimización de Rendimiento:** Uso de imágenes en formato WebP y carga diferida (`loading="lazy"`) para un rendimiento óptimo en dispositivos móviles.
+  * Persistencia de datos mediante **`localStorage`**, permitiendo que el carrito sobreviva a las recargas de la página.
+
+* **Formulario de Contacto y Validación en Tiempo Real:** Uso del evento `input` para validar longitudes de texto y formatos de correo electrónico (RegEx) instantáneamente. Aprovecha las clases de validación nativas de Bootstrap (`is-valid`, `is-invalid`) y previene el envío de formularios vacíos (`preventDefault`).
+
+* **Interactividad y Navegación Avanzada:**
+  * **Buscador:** Filtra el catálogo en tiempo real, maneja estados vacíos y utiliza `scrollIntoView()` para un desplazamiento suave hacia los resultados.
+
+  * **Menú Interactivo:** Eventos `mouseover` / `mouseout` para mostrar mensajes contextuales, y eventos `click` que restauran el catálogo completo automáticamente.
+
+* **Diseño Responsivo:** Uso avanzado del sistema de cuadrículas (Grid System) y componentes de Bootstrap 5 (Navbar colapsable, Carousel, Cards).
 
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **HTML5:** Estructura semántica (`<header>`, `<nav>`, `<main>`, `<article>`, `<footer>`).
+* **HTML5:** Estructura semántica (`<header>`, `<nav>`, `<main>`, `<article>`, `<footer>`) y validación de accesibilidad (W3C).
 
-* **CSS3:** Variables personalizadas (`:root`), transiciones, pseudo-clases y diseño visual limpio.
+* **CSS3:** Variables personalizadas (`:root`), transiciones suaves, pseudo-clases, diseño visual limpio y sobrescritura limpia del framework.
 
-* **Bootstrap 5:** Framework CSS para componentes modulares y responsividad rápida.
+* **Bootstrap 5 (v5.3.8):** Framework CSS para maquetación basada en Flexbox, Grid System, Modales interactivos y responsividad ágil (Mobile-First).
 
-* **JavaScript (ES6+):** Funciones modulares, Arrow Functions, Template Literals, Fetch API y manipulación dinámica del DOM.
+* **JavaScript (ES6+):** Funciones modulares, Arrow Functions, Fetch API (Promesas), LocalStorage, Expresiones Regulares (RegEx) y manipulación segura del DOM.
 
 
 ## 📂 Estructura del Proyecto
@@ -38,21 +46,21 @@ El sitio simula el catálogo web de una tienda de videojuegos, implementando bue
 proyecto-videojuegos/
 ├── assets/
 │   ├── css/
-│   │   └── styles.css      # Hoja de estilos personalizada
+│   │   └── styles.css    # Hoja de estilos personalizada
 │   ├── img/
 │   │   └── [imágenes optimizadas en formato .webp]
 │   └── js/
-│       └── app.js          # Lógica de programación, Fetch API y eventos
+│       └── app.js        # Lógica de programación y Fetch
 ├── data/
-│   └── productos.json      # Base de datos (Catálogo de videojuegos)
-├── index.html              # Estructura principal de la página
+│   └── productos.json    # Base de datos (videojuegos)
+├── index.html            # Estructura principal de la página
 └── README.md
 ```
 
 
 ## ⚙️ Instrucciones de Ejecución
 
-Para visualizar correctamente este proyecto en un entorno local y evitar bloqueos de seguridad por el uso de la Fetch API (CORS):
+Para visualizar correctamente este proyecto en un entorno local y permitir el correcto funcionamiento de la Fetch API (evitando bloqueos CORS):
 
 1. Clonar o descargar el repositorio.
 
@@ -61,6 +69,7 @@ Para visualizar correctamente este proyecto en un entorno local y evitar bloqueo
 3. Instalar y ejecutar la extensión Live Server.
 
 4. Abrir el archivo `index.html` con Live Server.
+
 
 ## 🔗 Enlaces del Proyecto
 

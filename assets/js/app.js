@@ -181,18 +181,15 @@ formBusqueda.addEventListener('submit', (evento) => {
 
     // Validar si el arreglo quedó vacío para mostrar un mensaje amigable
     if (productosFiltrados.length === 0) {
-        contenedorProductos.innerHTML = `
-            <p class="text-center w-100 mt-5 fs-4 alerta-busqueda">
-                No se encontraron juegos para "${terminoBusqueda}".
-            </p>
-        `;
+        contenedorProductos.textContent = '';
+        const mensajeVacio = document.createElement('p');
+        mensajeVacio.className = 'text-center w-100 mt-5 fs-4 alerta-busqueda';
+        mensajeVacio.textContent = `No se encontraron juegos para "${terminoBusqueda}".`;
+        contenedorProductos.appendChild(mensajeVacio);
     }
 
     // Desplazamiento automático hacia la sección de resultados
     seccionProductos.scrollIntoView({ behavior: 'smooth' });
-
-    // Limpiar la barra de búsqueda
-    formBusqueda.reset();
 });
 
 
@@ -249,29 +246,37 @@ const actualizarModalCarrito = () => {
         // Sumar total
         total += item.precio;
 
-        // Crear nodo para el resumen del producto
+        // Contenedor principal de la fila
         const filaProducto = document.createElement('div');
-        filaProducto.className =
-            'd-flex justify-content-between align-item-center \
-             mb-3 border-bottom pb-2 border-secondary';
-        
-        filaProducto.innerHTML = `
-            <div>
-                <h6 class="mb-0 fw-bold">${item.titulo}</h6>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="fw-bold">
-                    $${item.precio.toLocaleString('es-CL')}
-                </span>
-                <button 
-                    class="btn btn-sm btn-danger fw-bold btn-eliminar" 
-                    data-indice="${index}"
-                >
-                    X
-                </button>
-            </div>
-        `;
+        filaProducto.className = 'd-flex justify-content-between \
+            align-items-center mb-3 border-bottom pb-2 border-secondary';
 
+        // Bloque Título
+        const divTitulo = document.createElement('div');
+        const titulo = document.createElement('h6');
+        titulo.className = 'mb-0 fw-bold';
+        titulo.textContent = item.titulo;
+        divTitulo.appendChild(titulo);
+
+        // Bloque Precio y Botón
+        const divAcciones = document.createElement('div');
+        divAcciones.className = 'd-flex align-items-center gap-3';
+
+        const spanPrecio = document.createElement('span');
+        spanPrecio.className = 'fw-bold';
+        spanPrecio.textContent = `$${item.precio.toLocaleString('es-CL')}`;
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn btn-sm btn-danger fw-bold btn-eliminar';
+        btnEliminar.setAttribute('data-indice', index);
+        btnEliminar.textContent = 'X';
+
+        divAcciones.appendChild(spanPrecio);
+        divAcciones.appendChild(btnEliminar);
+
+        // Ensamblar todo en la fila y enviarlo al modal
+        filaProducto.appendChild(divTitulo);
+        filaProducto.appendChild(divAcciones);
         cuerpoCarrito.appendChild(filaProducto);
     });
 
@@ -299,6 +304,12 @@ const inputNombre = document.getElementById('form-nombre');
 const inputCorreo = document.getElementById('form-correo');
 const inputMensaje = document.getElementById('form-mensaje');
 
+// Constantes de validación
+const nombreLargoMin = 3;
+const nombreLargoMax = 30;
+const mensajeLargoMin = 10;
+const mensajeLargoMax = 200;
+
 // Función genérica para pintar el input verde (válido) o rojo (inválido)
 const validarCampo = (input, condicion) => {
     if (condicion) {
@@ -312,33 +323,30 @@ const validarCampo = (input, condicion) => {
     }
 };
 
+// Funciones de validación
+const chequearLargoCampo = (campo, min, max) => {
+    const largo = campo.value.trim().length;
+    return validarCampo(campo, largo >= min && largo <= max);
+};
+
+const chequearCorreo = () => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return validarCampo(inputCorreo, regex.test(inputCorreo.value.trim()));
+};
+
 // Eventos en tiempo real (se ejecutan con cada pulsación de tecla)
-inputNombre.addEventListener('input', () => {
-    const largoNombre = inputNombre.value.trim().length;
-    validarCampo(inputNombre, largoNombre >= 3 && largoNombre <= 30);
-});
-
-inputCorreo.addEventListener('input', () => {
-    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    validarCampo(inputCorreo, regexCorreo.test(inputCorreo.value.trim()));
-});
-
-inputMensaje.addEventListener('input', () => {
-    const largoMensaje = inputMensaje.value.trim().length;
-    validarCampo(inputMensaje, largoMensaje >= 10 && largoMensaje <= 200);
-});
+inputNombre.addEventListener('input', () => chequearLargoCampo(inputNombre, nombreLargoMin, nombreLargoMax));
+inputCorreo.addEventListener('input', chequearCorreo);
+inputMensaje.addEventListener('input', () => chequearLargoCampo(inputMensaje, mensajeLargoMin, mensajeLargoMax));
 
 // Evento Submit
 formulario.addEventListener('submit', (evento) => {
     evento.preventDefault();
 
     // Re-evaluar todos los campos al momento de enviar
-    const largoNombre = inputNombre.value.trim().length;
-    const nombreValido = validarCampo(inputNombre, largoNombre >= 3 && largoNombre <= 30);
-    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const correoValido = validarCampo(inputCorreo, regexCorreo.test(inputCorreo.value.trim()));
-    const largoMensaje = inputMensaje.value.trim().length;
-    const mensajeValido = validarCampo(inputMensaje, largoMensaje >= 10 && largoMensaje <= 200);
+    const nombreValido = chequearLargoCampo(inputNombre, nombreLargoMin, nombreLargoMax);
+    const correoValido = chequearCorreo();
+    const mensajeValido = chequearLargoCampo(inputMensaje, mensajeLargoMin, mensajeLargoMax);
 
     // Si todos los campos cumplen las reglas, procedemos con éxito
     if (nombreValido && correoValido && mensajeValido) {
@@ -369,6 +377,21 @@ formulario.addEventListener('submit', (evento) => {
             contenedorAlerta.remove();
         }, 10000);
     }
+});
+
+
+// ===== RESTAURAR CATÁLOGO AL HACER CLIC EN EL MENÚ ===== //
+// Seleccionar los enlaces de "Inicio" y "Productos destacados"
+const enlacesRestaurar = document.querySelectorAll('a[href="#productos"], a[href="#inicio"]');
+
+enlacesRestaurar.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+        // Volver a pintar el arreglo completo original
+        renderizarProductos(catalogoGlobal);
+
+        // Limpiar la barra de búsqueda
+        formBusqueda.reset();
+    });
 });
 
 
